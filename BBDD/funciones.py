@@ -1,4 +1,5 @@
 import datetime as dt
+import os
 import pandas as pd
 import sqlite3
 from variables import *
@@ -98,7 +99,6 @@ def elige(algo, index):
         eleccion = input(texto[index]).upper()
     return eleccion        
 
-
 def consulta_base_datos():
         
     hoy = dt.datetime.now().strftime("%Y-%m-%d")
@@ -154,3 +154,8 @@ def elige_tabla():
 
     return tabla
 
+def clear(): # Limpiar pantalla
+    if os.name == "posix":
+        os.system ("clear")
+    elif os.name == ("ce", "nt", "dos"):
+        os.system ("cls")

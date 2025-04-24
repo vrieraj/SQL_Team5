@@ -39,6 +39,8 @@ def menu_principal():
     elif opcion == 4:
         quit()
 
+    input("\nPresiona 'Enter' para continuar...")
+    clear()
     menu_principal()
 
 
