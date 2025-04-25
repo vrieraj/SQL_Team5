@@ -49,14 +49,23 @@ def consulta(suministro):
     return str(ID)
 
 def consulta_tabla(tabla):
-    return pd.read_sql(f"SELECT * FROM {tabla}", conexion)
+    query = f"SELECT * FROM {tabla}"
+    if tabla == 'Suministros':
+        query = """SELECT B.Nombre, A.FECHA, C.Nombre, A.CANTIDAD
+                FROM Suministros as A
+                LEFT JOIN Proveedores as B ON A.ID_PROVEEDOR = B.ID
+                LEFT JOIN Pieza as C ON A.ID_PIEZA = C.ID
+                GROUP BY B.Nombre, A.FECHA
+                """
+                
+    return pd.read_sql(query, conexion)
 
 def insertar_suministros(fecha, ID_proveedor, ID_pieza, cantidad):
-    query = f"INSERT INTO Registro (FECHA, ID_PROVEEDOR, ID_PIEZA, CANTIDAD) VALUES (?,?,?,?)"
+    query = f"INSERT INTO Suministros (FECHA, ID_PROVEEDOR, ID_PIEZA, CANTIDAD) VALUES (?,?,?,?)"
     cursor.execute(query,(fecha,ID_proveedor,ID_pieza,cantidad))
     conexion.commit()
 
-    query = """SELECT * FROM Registro"""
+    query = """SELECT * FROM Suministros"""
     df= pd.read_sql(query, conexion).set_index('FECHA')
 
     return df
@@ -126,7 +135,7 @@ def consulta_base_datos():
             print(cantidad)
             
             insertar_suministros(hoy, ID_proveedor, ID_pieza, cantidad)
-            print(consulta_tabla('Registro'))
+            print(consulta_tabla('Suministros'))
 
             if elige(tablas[1][1], 1) == 'S':
                 continue
