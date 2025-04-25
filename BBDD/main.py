@@ -30,11 +30,15 @@ def menu_principal():
         print(consulta_tabla(tabla))
 
     elif opcion == 3:
-        menu = '\n\t 1. Proveedores\n\t 2. Pieza'
+        menu = '\n\t 1. Proveedores\n\t 2. Pieza\n\t 3. Salir\n'
         eleccion = input(menu)
-        while eleccion.isnumeric() != True or int(eleccion) > 2 or int(eleccion) <0:
+        while eleccion.isnumeric() != True or int(eleccion) > 3 or int(eleccion) <0:
             eleccion = input(menu)
-        insertar_campo(tablas[int(eleccion)-1][0])
+        if int(eleccion) == 3:
+            clear()
+            menu_principal()
+        else:
+            insertar_campo(tablas[int(eleccion)-1][0])
 
     elif opcion == 4:
         quit()

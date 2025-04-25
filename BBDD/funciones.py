@@ -4,6 +4,12 @@ import pandas as pd
 import sqlite3
 from variables import *
 
+def clear(): # Limpiar pantalla
+    if os.name == "posix":
+        os.system ("clear")
+    elif os.name == ("ce", "nt", "dos"):
+        os.system ("cls")
+
 def consulta_elemento(tabla, nombre):
     query = f"""
         SELECT *
@@ -23,39 +29,38 @@ def consulta_id(tabla, ID:list):
         """
     return pd.read_sql(query, conexion)['Nombre'][0]
 def consulta(suministro):
+    clear()
     tabla, algo = suministro[0], suministro[1]
 
-    elemento = input(f'Inserte {algo}:').capitalize()
+    elemento = input(f'Inserte {algo}:\t').capitalize()
     resultados = consulta_elemento(tabla, elemento)
 
     if type(resultados) == str:
-        print(resultados)
         return 'salida'
     else:
         if len(resultados) > 1:
             for index, resultado in enumerate(resultados):
                 print(index, consulta_id(tabla, resultado))
 
-            index = input(f'Seleccione {algo}:')
+            index = input(f'Seleccione {algo}:\t')
             while index.isnumeric() != True or int(index) > len(resultados)-1 or int(len(resultados)-1) <0:
-                index = input(f'Inserte un número entre 0-{len(resultados)-1}:')
+                index = input(f'Inserte un número entre 0-{len(resultados)-1}:\t')
             ID = resultados[int(index)]
         else:
             ID = resultados[0]
             index = 0
-    
     print(consulta_id(tabla, ID))
     
     return str(ID)
 
 def consulta_tabla(tabla):
+    clear()
     query = f"SELECT * FROM {tabla}"
     if tabla == 'Suministros':
         query = """SELECT B.Nombre, A.FECHA, C.Nombre, A.CANTIDAD
                 FROM Suministros as A
                 LEFT JOIN Proveedores as B ON A.ID_PROVEEDOR = B.ID
                 LEFT JOIN Pieza as C ON A.ID_PIEZA = C.ID
-                GROUP BY B.Nombre, A.FECHA
                 """
                 
     return pd.read_sql(query, conexion)
@@ -102,14 +107,15 @@ def insertar_campo(algo):
     return df
 
 def elige(algo, index):
-    texto = [f'No se encontró {algo}, ¿desea agregar {algo} (S/N)', f'¿Desea añadir {algo}? (S/N)']
+    clear()
+    texto = [f'No se encontró {algo}, ¿desea agregar {algo}? (S/N)\t', f'¿Desea añadir otr@ {algo}? (S/N)\t']
     eleccion = input(texto[index]).upper()
     while eleccion != 'S' and eleccion != 'N':
         eleccion = input(texto[index]).upper()
     return eleccion        
 
 def consulta_base_datos():
-        
+    clear()
     hoy = dt.datetime.now().strftime("%Y-%m-%d")
 
     tablas = [('Proveedores','proveedor'),('Pieza','pieza')]
@@ -129,9 +135,9 @@ def consulta_base_datos():
                     print(insertar_campo(tablas[1][1]))
                 else:
                     break      
-            cantidad = input(f'Indique cantidad de piezas:')
+            cantidad = input(f'Indique cantidad de piezas:\t')
             while cantidad.isnumeric() != True or int(cantidad) <= 0:
-                cantidad = input(f'Inserte una cantidad:')
+                cantidad = input(f'Inserte una cantidad:\t')
             print(cantidad)
             
             insertar_suministros(hoy, ID_proveedor, ID_pieza, cantidad)
@@ -146,6 +152,7 @@ def consulta_base_datos():
         break
 
 def elige_tabla():
+    clear()
     query = """
     SELECT name
     FROM sqlite_master
@@ -162,9 +169,3 @@ def elige_tabla():
     tabla = resultados.iloc[int(index),0]
 
     return tabla
-
-def clear(): # Limpiar pantalla
-    if os.name == "posix":
-        os.system ("clear")
-    elif os.name == ("ce", "nt", "dos"):
-        os.system ("cls")
